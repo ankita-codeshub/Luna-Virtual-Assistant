@@ -28,12 +28,28 @@
 
 ---
 
+## 📑 Contents
+
+1. [📖 About](#-about)
+2. [🚀 Features](#-features)
+3. [🛠️ Tech Stack](#%EF%B8%8F-tech-stack)
+4. [📂 Project Structure](#-project-structure)
+5. [🎭 Dynamic Facial Expressions](#-dynamic-facial-expressions)
+6. [🎤 Supported Voice Commands](#-supported-voice-commands)
+7. [💻 How to Run Locally](#-how-to-run-locally)
+8. [🌟 Future Improvements](#-future-improvements)
+9. [👩‍💻 Contributing](#%E2%80%8D-contributing)
+10. [🙏 Acknowledgements](#-acknowledgements)
+11. [📄 License](#-license)
+12. [👤 Author](#-author)
+
+---
 
 ## 📖 About
 
 > **Luna** is a smart and interactive **Virtual Voice Assistant** built using **HTML, CSS and JavaScript**.
 
-Luna listens to your voice commands, responds through speech, opens websites, provides weather updates, fetches the latest news, performs calculations and more.
+Luna listens to your voice commands, responds through speech, opens websites, looks up weather and news, performs calculations and more.
 
 She also features **dynamic facial expressions** using GIF animations, making every interaction more engaging and user-friendly. 🎭
 
@@ -47,10 +63,12 @@ She also features **dynamic facial expressions** using GIF animations, making ev
 | 🔊 | **Speech Response** | Luna replies using text-to-speech technology |
 | 🌐 | **Website Navigation** | Open Google, YouTube, Instagram, Facebook and WhatsApp |
 | ⏰ | **Time & Date** | Get the current time and date by voice |
-| ☁️ | **Live Weather Updates** | Check weather information for different cities |
-| 📰 | **Latest News** | Get the latest news updates for a selected city |
-| 🧮 | **Calculator** | Perform mathematical calculations with voice commands |
+| ☁️ | **Weather Lookup** | Say a city and Luna opens its weather results on Google |
+| 📰 | **Latest News** | Say a city and Luna opens its latest news results on Google |
+| 🧮 | **Calculator** | Calculate by voice, or open an online scientific calculator |
+| 🔎 | **Smart Search** | Anything Luna doesn't recognise is searched on Google |
 | 🤖 | **Dynamic Expressions** | Luna shows different emotions using animated GIFs |
+| 🧠 | **Optional AI Brain** | `server.js` can answer with Gemini, Groq or OpenRouter online, and Ollama offline |
 | 🎨 | **Interactive UI** | User-friendly interface with animations and visual feedback |
 
 ---
@@ -63,8 +81,8 @@ She also features **dynamic facial expressions** using GIF animations, making ev
 | ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) | Styling, layout, and animations |
 | ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) | Core functionality and command processing |
 | ![Web Speech API](https://img.shields.io/badge/Web%20Speech%20API-8A2BE2?style=flat-square) | Speech recognition and text-to-speech |
-| ![Weather API](https://img.shields.io/badge/Weather%20API-00A8E8?style=flat-square) | Weather information |
-| ![News API](https://img.shields.io/badge/News%20API-FF5722?style=flat-square) | Latest news updates |
+| ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white) | Local server (`server.js`) |
+| ![AI Brain](https://img.shields.io/badge/Gemini%20%7C%20Groq%20%7C%20OpenRouter%20%7C%20Ollama-6C47FF?style=flat-square) | Optional AI chat backend (`/api/chat`) with online and offline modes |
 
 ---
 
@@ -83,6 +101,8 @@ Simple-Voice-Virtual-Assistant/
 ├── sw.js
 ├── manifest.json
 ├── package.json
+├── LICENSE
+├── README.txt
 │
 ├── logo.jpg
 ├── luna logo.png
@@ -130,15 +150,19 @@ setBotMood("sad");
 | 🗣️ Voice Command | ⚡ Action |
 |:---|:---|
 | `Hi Luna` / `Hello` | Luna greets the user |
+| `Who are you?` | Luna introduces herself |
 | `What time is it?` | Announces the current time |
 | `What's today's date?` | Announces the current date |
 | `Open YouTube` | Opens YouTube |
 | `Open Google` | Opens Google |
 | `Open WhatsApp` | Opens WhatsApp Web |
 | `Open Instagram` | Opens Instagram |
-| `Weather in [city]` | Provides weather information |
-| `News in [city]` | Provides news updates |
-| `Calculate 12 plus 5` | Calculates and announces the result |
+| `Open Facebook` | Opens Facebook |
+| `Open Calculator` | Opens an online scientific calculator |
+| `Calculate 12 + 5` | Calculates and announces the result |
+| `Weather in [city]` | Opens Google weather results for the city |
+| `News in [city]` | Opens Google news results for the city |
+| *Anything else* | Searches Google for what you said |
 
 ---
 
@@ -158,7 +182,9 @@ git clone https://github.com/ankita-codeshub/Simple-Voice-Virtual-Assistant.git
 cd Simple-Voice-Virtual-Assistant
 ```
 
-### 3️⃣ Install dependencies *(if required)*
+### 3️⃣ Install dependencies
+
+Requires [Node.js](https://nodejs.org). This installs `express`.
 
 ```bash
 npm install
@@ -166,28 +192,58 @@ npm install
 
 ### 4️⃣ Run the application
 
-If the project uses a Node.js server, use the start command configured in `package.json`:
+Luna's server (`server.js`) runs on port `3000`. Start it with an online AI provider:
 
-```bash
-# [PLACEHOLDER: replace with the start command from your package.json]
+**Windows PowerShell**
+
+```powershell
+$env:PROVIDER="gemini"; $env:API_KEY="your_key"; node server.js
 ```
 
-Alternatively, open `index.html` using the **VS Code Live Server** extension if your setup supports direct browser execution.
+**Mac / Linux**
+
+```bash
+PROVIDER=gemini API_KEY=your_key node server.js
+```
+
+**Offline only** *(no key, uses Ollama)*
+
+```bash
+node server.js
+```
+
+Then open **http://localhost:3000** in **Chrome or Edge**.
+
+> 💡 Prefer not to use the server? You can also open `index.html` with the **VS Code Live Server** extension; the voice commands run in the browser.
 
 ### 5️⃣ Start interacting with Luna! 🌙
 
 Allow **microphone access** when prompted and try the supported voice commands.
 
 <details>
-<summary><b>🔑 API configuration (Weather & News)</b></summary>
+<summary><b>🧠 AI brain configuration (optional)</b></summary>
 
 <br />
 
-Luna uses a Weather API and a News API. Add your own keys where the project expects them:
+`server.js` tries an **online brain** first and automatically falls back to an **offline brain** ([Ollama](https://ollama.com)) if there is no internet or the request fails. Settings are passed as environment variables:
 
-- Weather API provider: `[PLACEHOLDER: provider name]`
-- News API provider: `[PLACEHOLDER: provider name]`
-- Where to add your keys: `[PLACEHOLDER: file / variable name]`
+| Variable | Purpose | Default |
+|:---|:---|:---|
+| `PROVIDER` | Online provider: `gemini`, `groq` or `openrouter` | `gemini` |
+| `API_KEY` | Your provider API key | *none (offline only)* |
+| `MODEL` | Override the provider's model | provider default |
+| `OLLAMA_URL` | Ollama endpoint | `http://localhost:11434/v1/chat/completions` |
+| `OFFLINE_MODEL` | Offline Ollama model | `llama3.2:3b` |
+
+**Offline setup:** install Ollama, then run:
+
+```bash
+ollama pull llama3.2:3b
+```
+
+**Free API keys:** [Gemini](https://aistudio.google.com/apikey) · [Groq](https://console.groq.com) · [OpenRouter](https://openrouter.ai)
+
+> ℹ️ Weather and news need **no API key**; Luna opens the Google results for the city you ask about.
 
 > ⚠️ Never commit your private API keys to a public repository.
 
@@ -238,7 +294,8 @@ Contributions are welcome! 🎉 If you want to improve Luna or add new features:
 
 - 🎙️ [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
 - 🔤 [Google Fonts](https://fonts.google.com/)
-- ☁️ Weather and news API providers
+- ☁️ Google Search (weather and news results)
+- 🧠 [Ollama](https://ollama.com), [Gemini](https://aistudio.google.com), [Groq](https://console.groq.com) and [OpenRouter](https://openrouter.ai) for the optional AI brain
 
 ---
 
