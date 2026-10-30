@@ -82,29 +82,6 @@ She also features **dynamic facial expressions** using GIF animations, making ev
 
 ---
 
-## 🔄 Workflow
-
-```mermaid
-flowchart LR
-    A([🎙️ User speaks]) --> B[Web Speech API<br/>Speech Recognition]
-    B --> C{JavaScript<br/>Command Processing}
-    C -->|Greeting| D[👋 Greet the user]
-    C -->|Time / Date| E[⏰ Announce time or date]
-    C -->|Open site| F[🌐 Open website]
-    C -->|Weather| G[☁️ Weather API]
-    C -->|News| H[📰 News API]
-    C -->|Calculate| I[🧮 Compute result]
-    D --> J[🔊 Text-to-Speech response]
-    E --> J
-    F --> J
-    G --> J
-    H --> J
-    I --> J
-    J --> K[🎭 Update facial expression GIF]
-```
-
----
-
 ## 📂 Project Structure
 
 <details open>
@@ -150,9 +127,7 @@ Simple-Voice-Virtual-Assistant/
 
 Luna uses **animated GIFs** to express different moods and reactions. You can customise the expressions by replacing or adding GIF files inside the `faces` folder.
 
-| 😠 | 🚶 | 🤩 | 😊 | 🤔 | 😢 | 😴 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `angry` | `coming` | `excited` | `happy` | `interesting` | `sad` | `sleeping` |
+
 
 **Example in JavaScript**
 
