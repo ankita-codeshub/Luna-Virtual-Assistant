@@ -28,18 +28,6 @@
 
 ---
 
-## 🧭 Navigation
-
-<div align="center">
-
-| | | | | |
-|:---:|:---:|:---:|:---:|:---:|
-| [📖 About](#-about) | [🚀 Features](#-features) | [🛠️ Tech Stack](#️-tech-stack) | [📂 Structure](#-project-structure) | [🎭 Expressions](#-dynamic-facial-expressions) |
-| [🎤 Commands](#-supported-voice-commands) | [💻 Setup](#-how-to-run-locally) | [🌟 Roadmap](#-future-improvements) | [👩‍💻 Contributing](#-contributing) | [🙏 Credits](#-acknowledgements) |
-
-</div>
-
----
 
 ## 📖 About
 
