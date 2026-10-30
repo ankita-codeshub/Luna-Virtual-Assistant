@@ -32,11 +32,10 @@
 
 <div align="center">
 
-| | | | |
-|:---:|:---:|:---:|:---:|
-| [📖 About](#-about) | [🚀 Features](#-features) | [🎬 Preview](#-preview) | [🛠️ Tech Stack](#️-tech-stack) |
-| [🔄 Workflow](#-workflow) | [📂 Structure](#-project-structure) | [🎭 Expressions](#-dynamic-facial-expressions) | [🎤 Commands](#-supported-voice-commands) |
-| [💻 Setup](#-how-to-run-locally) | [🌟 Roadmap](#-future-improvements) | [👩‍💻 Contributing](#-contributing) | [🙏 Credits](#-acknowledgements) |
+| | | | | |
+|:---:|:---:|:---:|:---:|:---:|
+| [📖 About](#-about) | [🚀 Features](#-features) | [🛠️ Tech Stack](#️-tech-stack) | [📂 Structure](#-project-structure) | [🎭 Expressions](#-dynamic-facial-expressions) |
+| [🎤 Commands](#-supported-voice-commands) | [💻 Setup](#-how-to-run-locally) | [🌟 Roadmap](#-future-improvements) | [👩‍💻 Contributing](#-contributing) | [🙏 Credits](#-acknowledgements) |
 
 </div>
 
@@ -67,7 +66,6 @@ She also features **dynamic facial expressions** using GIF animations, making ev
 | 🎨 | **Interactive UI** | User-friendly interface with animations and visual feedback |
 
 ---
-
 
 ## 🛠️ Tech Stack
 
@@ -126,8 +124,6 @@ Simple-Voice-Virtual-Assistant/
 ## 🎭 Dynamic Facial Expressions
 
 Luna uses **animated GIFs** to express different moods and reactions. You can customise the expressions by replacing or adding GIF files inside the `faces` folder.
-
-
 
 **Example in JavaScript**
 
