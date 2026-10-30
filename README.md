@@ -1,12 +1,12 @@
-###**🌙 Luna – Virtual Voice Assistant**
+#**🌙 Luna – Virtual Voice Assistant**
 
-Luna is a smart and interactive Virtual Voice Assistant built using HTML, CSS, and JavaScript.
+> Luna is a smart and interactive Virtual Voice Assistant built using HTML, CSS, and JavaScript.
 
 It can listen to voice commands, respond through speech, open websites, provide weather updates, fetch the latest news, perform calculations, and more.
 
 Luna also features dynamic facial expressions using GIF animations, making the interaction more engaging and user-friendly. 🎭
 
-🚀 Features
+##**🚀 Features:**
 
 - 🎙️ Voice Recognition – Interact with Luna using natural voice commands.
 - 🔊 Speech Response – Luna responds using text-to-speech technology.
@@ -18,9 +18,10 @@ Luna also features dynamic facial expressions using GIF animations, making the i
 - 🤖 Dynamic Expressions – Luna displays different emotions using animated GIFs.
 - 🎨 Interactive UI – A user-friendly interface with animations and visual feedback.
 
-🛠️ Tech Stack
+##**🛠️ Tech Stack:**
 
 Technology| Purpose
+|---|---|
 HTML5| Structure of the application
 CSS3| Styling, layout, and animations
 JavaScript| Core functionality and command processing
