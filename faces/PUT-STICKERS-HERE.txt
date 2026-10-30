@@ -1,0 +1,2 @@
+Optional (for offline stickers): save the Tenor GIFs here with these exact names:
+happy.gif  sleepy.gif  playful.gif  thinking.gif  angry.gif  wake.gif
