@@ -1,114 +1,165 @@
-# Simple-Voice-Virtual-Assistant
-# 🌙 Luna - Virtual Voice Assistant  
+🌙 Luna – Virtual Voice Assistant
 
-Luna is a **smart virtual voice assistant** built with **HTML, CSS, and JavaScript**.  
-It can **listen**, **speak**, and **perform various tasks** like opening websites, checking the weather, telling the current time/date, and more — just like Google Assistant.  
-Luna also supports **dynamic expression GIFs**, making the assistant more interactive and fun to use. 🎭
+Luna is a smart and interactive Virtual Voice Assistant built using HTML, CSS, and JavaScript.
 
+It can listen to voice commands, respond through speech, open websites, provide weather updates, fetch the latest news, perform calculations, and more.
 
-## 🚀 Features
-- 🎙 **Voice Recognition** – Talk to Luna using natural speech.
-- 🔊 **Speech Reply** – Luna talks back using a realistic voice.
-- 🌐 **Open Websites** – YouTube, Google, Instagram, Facebook, WhatsApp, etc.
-- ⏱ **Time & Date** – Get the current time and date.
-- ☁ **Live Weather** – Check the latest weather for any city.
-- 📰 **Latest News** – Get live news updates for any city.
-- 🧮 **Calculator Support** – Perform calculations using voice commands.
-- 🤖 **Dynamic Expressions** – Luna displays emotions using **GIFs** like happy, sad, thinking, etc.
+Luna also features dynamic facial expressions using GIF animations, making the interaction more engaging and user-friendly. 🎭
 
+🚀 Features
 
-## 📂 Project Structure
-Virtual-Assistant-Luna/
+- 🎙️ Voice Recognition – Interact with Luna using natural voice commands.
+- 🔊 Speech Response – Luna responds using text-to-speech technology.
+- 🌐 Website Navigation – Open popular websites such as Google, YouTube, Instagram, Facebook, and WhatsApp.
+- ⏰ Time & Date – Get the current time and date through voice commands.
+- ☁️ Live Weather Updates – Check weather information for different cities.
+- 📰 Latest News – Get the latest news updates for a selected city.
+- 🧮 Calculator – Perform mathematical calculations using voice commands.
+- 🤖 Dynamic Expressions – Luna displays different emotions using animated GIFs.
+- 🎨 Interactive UI – A user-friendly interface with animations and visual feedback.
+
+🛠️ Tech Stack
+
+Technology| Purpose
+HTML5| Structure of the application
+CSS3| Styling, layout, and animations
+JavaScript| Core functionality and command processing
+Web Speech API| Speech recognition and text-to-speech
+Weather API| Weather information
+News API| Latest news updates
+
+📂 Project Structure
+
+Simple-Voice-Virtual-Assistant/
 │
-├── index.html # Main HTML file
-├── style.css # Styling
-├── script.js # Core bot logic
+├── index.html
+├── style.css
+├── script.js
+├── server.js
+├── sw.js
+├── manifest.json
+├── package.json
 │
-├── logo.jpg # Luna's logo
-├── mic.svg # Microphone icon
-├── voice.gif # Default speaking animation
+├── logo.jpg
+├── luna logo.png
+├── mic.svg
+├── mic1.svg
+├── voice.gif
+├── voice.svg
 │
-└── faces/ # Folder for Luna's mood GIFs
-├── happy.gif
-├── sad.gif
-├── thinking.gif
-├── surprised.gif
-└── neutral.gif
+├── faces/
+│   ├── angry.gif
+│   ├── coming.gif
+│   ├── excited.gif
+│   ├── happy.gif
+│   ├── interesting.gif
+│   ├── sad.gif
+│   └── sleeping.gif
+│
+└── README.md
 
-## 🖼️ Adding Expression GIFs
-Luna can express different **emotions** dynamically.  
-You can customize or replace these GIFs inside the `faces` folder.
+Note: This structure represents the project files. Some optional files may vary depending on your local setup.
 
-| **Mood**        | **Filename**        |
-|------------------|---------------------|
-| Happy 😊          | `happy.gif`         |
-| Sad 😢            | `sad.gif`           |
-| Thinking 🤔       | `thinking.gif`      |
-| Surprised 😲      | `surprised.gif`     |
-| Neutral 😐 (default) | `neutral.gif`    |
+🎭 Dynamic Facial Expressions
 
-**Example in Code:**
-```javascript
-// Change Luna's mood dynamically
-setBotMood("happy");     // Displays happy.gif
-setBotMood("thinking");  // Displays thinking.gif
-setBotMood("sad");       // Displays sad.gif
+Luna uses animated GIFs to express different moods and reactions.
+
+You can customize the expressions by replacing or adding GIF files inside the "faces" folder.
+
+Example in JavaScript
+
+// Change Luna's expression dynamically
+setBotMood("happy");
+setBotMood("sad");
+setBotMood("thinking");
+
+The expression changes according to the mood selected by the application.
 
 🎤 Supported Voice Commands
-Here are some commands you can try:
 
-Command	Action Performed
-Hi Luna / Hello---------- Luna greets you back.
-What time is it?---------	Tells the current time.
-What's today's date?----- Reads out today's date.
-Open YouTube-------------	Opens YouTube in a new tab.
-Open Google	--------------Opens Google search engine.
-Open WhatsApp-------------Opens WhatsApp Web.
-Open Instagram-----------	Opens Instagram.
-Weather in [city name]---	Shows live weather for that city.
-News in [city name]------	Shows latest news for that city.
-Calculate 12 plus 5	------Calculates and speaks the result.
+Voice Command| Action
+Hi Luna / Hello| Luna greets the user
+What time is it?| Announces the current time
+What's today's date?| Announces the current date
+Open YouTube| Opens YouTube
+Open Google| Opens Google
+Open WhatsApp| Opens WhatsApp Web
+Open Instagram| Opens Instagram
+Weather in [city]| Provides weather information
+News in [city]| Provides news updates
+Calculate 12 plus 5| Calculates and announces the result
 
-💻 How to Run Locally:
-Follow these steps to set up Luna on your machine:
+💻 How to Run Locally
 
-Clone the repository
-git clone https://github.com/your-username/Luna-Virtual-Assistant.git
-Open the project folder
-cd Luna-Virtual-Assistant
-Run the assistant
-Simply open index.html in any modern browser (Chrome recommended).
+Follow these steps to run Luna on your computer.
 
-🛠 Tech Stack:
+1. Clone the repository
 
-HTML5 – Structure of the app.
-CSS3 – Styling with custom fonts and animations.
-JavaScript – Core logic for speech recognition and dynamic responses.
-Web Speech API – For speech-to-text and text-to-speech functionality.
+git clone https://github.com/ankita-codeshub/Simple-Voice-Virtual-Assistant.git
+
+2. Navigate to the project folder
+
+cd Simple-Voice-Virtual-Assistant
+
+3. Install dependencies (if required)
+
+npm install
+
+4. Run the application
+
+If the project uses a Node.js server, use the start command configured in "package.json".
+
+Alternatively, open "index.html" using the VS Code Live Server extension if your setup supports direct browser execution.
+
+5. Start interacting with Luna!
+
+Allow microphone access when prompted and try the supported voice commands.
 
 🌟 Future Improvements
 
-Add offline voice recognition support.
-Build a mobile app version of Luna.
-Integrate AI-based responses using GPT APIs.
-Add custom voice packs for a more natural tone.
+- Add offline voice recognition.
+- Develop a mobile application.
+- Integrate AI-powered conversational responses.
+- Add customizable voice packs.
+- Improve multilingual voice interaction.
+- Introduce more facial expressions and animations.
 
 👩‍💻 Contributing
 
-Contributions are always welcome!
-If you have ideas to improve Luna:
-Fork the repo.
-Create a new branch: git checkout -b feature-idea.
-Commit your changes: git commit -m 'Added a cool feature'.
-Push and open a Pull Request.
+Contributions are welcome!
 
-✨ Acknowledgements
+If you want to improve Luna or add new features:
 
-Web Speech API
-Fonts used from Google Fonts
+1. Fork this repository.
+2. Create a new branch:
 
-🧾 License
+git checkout -b feature-name
+
+3. Make your changes.
+4. Commit your changes:
+
+git commit -m "Add new feature"
+
+5. Push your branch:
+
+git push origin feature-name
+
+6. Open a Pull Request.
+
+🙏 Acknowledgements
+
+- "Web Speech API" (https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
+- "Google Fonts" (https://fonts.google.com/)
+- Weather and news API providers.
+
+📄 License
+
 This project is licensed under the MIT License.
-You are free to use, modify, and distribute this project with proper credit.
 
+You are free to use, modify, and distribute this project according to the terms of the license.
 
+---
+
+Made with ❤️ by Ankita
+
+🌙 Meet Luna – Your friendly virtual voice assistant!
