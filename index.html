@@ -3,21 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luna,My virtual assistant</title>
-    <link rel ="shortcut icon" href="logo.jpg" type="Image/x-icon">
-    <link rel ="stylesheet" href="style.css">
+    <title>Luna, My virtual assistant</title>
+    <link rel="shortcut icon" href="icon-192.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <style id="luna-core">
+        /* Luna's body: works even if style.css is an old copy */
+        html { overflow-x: hidden; }
+        /* Luna's size is one number (--luna). The circle around her is 1.5x that, and the glowing ring is bigger still. */
+        .image-container { --luna: 230px; position: relative; width: calc(var(--luna) * 1.5); height: calc(var(--luna) * 1.5); margin: calc(var(--luna) * .26) 0; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 2;
+            background: radial-gradient(circle, rgba(196,7,229,.18) 0%, transparent 70%); }
+        #face { position: relative; z-index: 1; width: var(--luna); height: var(--luna); object-fit: contain; transition: opacity .3s ease; pointer-events: none; user-select: none; }
+        #face.swap { animation: facePop .35s ease; }
+        @keyframes facePop { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+        #orb { width: calc(var(--luna) * 2.3); height: calc(var(--luna) * 2.3); }
+        #lunaPic { position: absolute; left: 50%; top: 50%; z-index: 1; width: var(--luna); height: var(--luna); margin: calc(var(--luna) / -2) 0 0 calc(var(--luna) / -2); object-fit: contain; pointer-events: none; user-select: none;
+            transition: opacity .3s ease; transform-origin: 50% 90%; filter: drop-shadow(0 0 18px var(--glow, rgba(79,195,247,.55))); }
+        #lunaPic[data-pose="happy"]    { --glow: rgba(255,150,220,.6); animation: pHappy 2.6s ease-in-out infinite; }
+        #lunaPic[data-pose="sleepy"]   { --glow: rgba(150,130,255,.4); animation: pSleep 4s ease-in-out infinite; }
+        #lunaPic[data-pose="thinking"] { --glow: rgba(180,160,255,.6); animation: pThink 3s ease-in-out infinite; }
+        #lunaPic[data-pose="playful"]  { --glow: rgba(255,200,80,.7);  animation: pPlay .7s ease-in-out infinite; }
+        #lunaPic[data-pose="angry"]    { --glow: rgba(255,70,70,.85);  animation: pAngry .35s linear infinite; }
+        #lunaPic[data-pose="coming"]  { --glow: rgba(255,200,80,.7);  animation: pRun .35s ease-in-out infinite; }
+        #lunaPic[data-pose="sad"]      { --glow: rgba(120,150,200,.5); animation: pSad 3.5s ease-in-out infinite; }
+        .speaking #lunaPic { animation: pTalk .5s ease-in-out infinite; }
+        @keyframes pHappy { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        @keyframes pSleep { 0%,100% { transform: rotate(-5deg) translateY(4px) scale(.97); } 50% { transform: rotate(-5deg) translateY(0) scale(1); } }
+        @keyframes pThink { 0%,100% { transform: rotate(5deg); } 50% { transform: rotate(8deg) translateY(-3px); } }
+        @keyframes pPlay  { 0%,100% { transform: translateY(0) scale(1,1); } 40% { transform: translateY(-18px) scale(.98,1.04); } 70% { transform: translateY(0) scale(1.04,.96); } }
+        @keyframes pAngry { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+        @keyframes pSad   { 0%,100% { transform: translateY(6px) rotate(-3deg) scale(.96); } 50% { transform: translateY(9px) rotate(-3deg) scale(.95); } }
+        @keyframes pRun   { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+        @keyframes pTalk  { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-4px) scale(1.02,.99); } }
+        /* The circle never moves or changes: only the picture inside it does. */
+        #face { transition: opacity .3s ease, filter 1.5s ease; }
+        .asleep #face, .asleep #lunaPic { filter: brightness(.55) saturate(.8); }
+        .zzz { position: absolute; right: -4px; top: -8px; z-index: 3; opacity: 0; pointer-events: none; font-weight: 800; color: #c9c9ff; transition: opacity 1s; }
+        .asleep .zzz { opacity: 1; }
+        .zzz span { display: inline-block; opacity: 0; animation: zFloat 2.2s ease-in-out infinite; }
+        .zzz span:nth-child(2) { animation-delay: .5s; font-size: 1.3em; }
+        .zzz span:nth-child(3) { animation-delay: 1s; font-size: 1.7em; }
+        @keyframes zFloat { 0% { transform: translate(0,10px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(12px,-26px); opacity: 0; } }
+        /* ---- Dynamic browser: Luna is centred by default. When a site or search is requested she slides left and the browser opens beside her. ---- */
+        #stage { display: flex; flex-direction: row; justify-content: center; align-items: center; width: 100%; padding: 0 12px; }
+        .main-container { flex: 0 0 min(600px, 90vw); width: auto; max-width: 100%;
+            transition: flex-basis .75s cubic-bezier(.22,1,.36,1), transform .4s cubic-bezier(.175,.885,.32,1.275), box-shadow .4s ease; }
+        #webPane { display: flex; flex-direction: column; flex: 0 1 0px; min-width: 0; height: 0; margin-left: 0; opacity: 0; visibility: hidden; pointer-events: none; overflow: hidden;
+            background: #0d0720; border: 1px solid rgba(255,255,255,.12); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,.5); transform: translateX(40px) scale(.98);
+            transition: flex-grow .75s cubic-bezier(.22,1,.36,1), height .75s cubic-bezier(.22,1,.36,1), margin-left .75s cubic-bezier(.22,1,.36,1), opacity .45s ease .2s, transform .75s cubic-bezier(.22,1,.36,1), visibility 0s linear .8s; }
+        body.browsing { height: 100vh; min-height: 0; padding: 12px 0; overflow: hidden; }
+        body.browsing footer { display: none; }
+        body.browsing .main-container { flex-basis: min(600px, 42vw); max-height: calc(100vh - 24px); overflow-y: auto; justify-content: safe center; transform: none; }
+        body.browsing .main-container:hover { transform: none; }
+        body.browsing #webPane { flex: 1 1 0px; height: calc(100vh - 24px); margin-left: 12px; opacity: 1; visibility: visible; pointer-events: auto; transform: none;
+            transition: flex-grow .75s cubic-bezier(.22,1,.36,1), height .75s cubic-bezier(.22,1,.36,1), margin-left .75s cubic-bezier(.22,1,.36,1), opacity .5s ease .25s, transform .75s cubic-bezier(.22,1,.36,1), visibility 0s; }
+        .web-bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.08); font-size: .9rem; }
+        .web-bar button, #webOpen { flex: none; color: #fff; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 50px; min-width: 34px; height: 34px; padding: 0 10px; cursor: pointer; text-decoration: none; font: inherit; display: inline-flex; align-items: center; justify-content: center; transition: background .2s ease, opacity .2s ease; }
+        .web-bar button:hover, #webOpen:hover { background: rgba(141,141,220,.5); }
+        .web-bar button:disabled { opacity: .35; cursor: default; }
+        #webClose:hover { background: rgba(255,90,140,.55); }
+        #webAddr { flex: 1; min-width: 0; height: 34px; padding: 0 16px; border-radius: 50px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); color: #fff; font: inherit; outline: none; }
+        #webAddr:focus { border-color: #8d8ddc; }
+        #webAddr::placeholder { color: rgba(255,255,255,.45); }
+        #webLoad { height: 2px; flex: none; opacity: 0; transition: opacity .3s ease; background: linear-gradient(90deg, transparent, #c407e5, #4fc3f7, transparent); background-size: 40% 100%; background-repeat: no-repeat; animation: webSlide 1s linear infinite; }
+        #webPane.loading #webLoad { opacity: 1; }
+        @keyframes webSlide { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+        #webNote { font-size: .8rem; color: #8d8ddc; padding: 4px 14px 6px; display: none; }
+        #webBody { position: relative; flex: 1; min-height: 0; background: #0d0720; }
+        #webFrame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+        #webFrame[hidden] { display: none; }
+        @media (max-width: 900px) {
+            #stage { flex-direction: column; }
+            .main-container, body.browsing .main-container { flex: none; width: min(600px, 90vw); max-height: none; overflow: visible; }
+            #webPane { flex: none; width: min(900px, 94vw); transform: translateY(30px); }
+            body.browsing { height: auto; min-height: 100vh; overflow: visible; }
+            body.browsing #webPane { flex: none; height: 75vh; margin: 12px 0 0; }
+        }
+        @media (max-height: 820px) and (min-width: 901px) { body.browsing .image-container { --luna: 190px; } }
+    </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a0b2e">
 </head>
-<body>
-    <img src="logo.jpg" alt="logo" id="logo">
-    <h1>I'm <span id="name,">Luna,</span>Your <span id="va">Virtual Assistant</span></h1>
-    <img src="voice.gif" alt="voice" id="voice">
-    <button id="btn"><img src="mic.svg" alt="mic"><span id="content">Click here for talk to me</span> </button>
-    <script src="scirpt.js"></script>
-</body>
- <footer>
-    <center>
-      <p>✨ Powered by Luna Assistant ✨</p>
-    </center>
-  </footer>
-</html>
+<body class="asleep">
+    <div id="stage">
+    <div class="main-container">
+        <div class="image-container" id="luna">
+            <canvas id="orb" width="460" height="460"></canvas>
+            <img id="face" src="faces/sleeping.gif" alt="Luna" style="opacity:0"
+                 onload="this.style.opacity=1; document.getElementById('lunaPic').style.opacity=0">
+            <img id="lunaPic" src="luna.png" alt="Luna" data-pose="sleepy">
+            <div class="zzz" aria-hidden="true"><span>z</span><span>z</span><span>Z</span></div>
+        </div>
+        <h1 class="greeting">I'm <span id="name">Luna,</span><br>Your <span id="va">Virtual Assistant</span></h1>
 
+        <div class="interaction-area">
+            <img src="voice.svg" alt="" id="voice">
+            <button id="btn" type="button" aria-live="polite">
+                <img src="mic1.svg" alt="" class="mic-icon">
+                <span id="content">Click here to talk to me</span>
+            </button>
+
+            <div id="chat" aria-live="polite">
+                <p id="userText"></p>
+                <p id="lunaText"></p>
+                <div id="linkArea"></div>
+            </div>
+
+            <div class="text-row">
+                <input id="textInput" type="text" placeholder="…or type a command" autocomplete="off" aria-label="Type a command">
+                <button id="sendBtn" type="button">Send</button>
+            </div>
+
+            <div class="opts">
+                <span id="moodLabel">😊 happy</span>
+                <select id="optLang" aria-label="Language">
+                    <option value="en-IN">English (India)</option>
+                    <option value="en-US">English (US)</option>
+                    <option value="hi-IN">हिन्दी</option>
+                </select>
+                <button id="histBtn" type="button">History</button>
+            </div>
+            <ul id="history" hidden></ul>
+        </div>
+    </div>
+
+    <aside id="webPane" aria-label="Luna's browser">
+        <div class="web-bar">
+            <button id="webBack" type="button" title="Back" aria-label="Back">◀</button>
+            <button id="webFwd" type="button" title="Forward" aria-label="Forward" disabled>▶</button>
+            <button id="webReload" type="button" title="Reload" aria-label="Reload">⟳</button>
+            <input id="webAddr" type="text" placeholder="Type a website or search…" autocomplete="off" spellcheck="false" aria-label="Address">
+            <button id="webCompat" type="button" title="Page blank or broken? Reload it in compatibility mode">🛡</button>
+            <a id="webOpen" href="#" target="_blank" rel="noopener noreferrer" title="Open in a new tab">↗</a>
+            <button id="webClose" type="button" title="Close browser and return to Luna" aria-label="Close browser">✕</button>
+        </div>
+        <div id="webLoad"></div>
+        <div id="webNote"></div>
+        <div id="webBody">
+            <iframe id="webFrame" title="Website" referrerpolicy="no-referrer" allow="fullscreen; clipboard-write" hidden
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+        </div>
+    </aside>
+    </div>
+
+    <footer>
+        <p>✨ Powered by Luna Assistant ✨</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

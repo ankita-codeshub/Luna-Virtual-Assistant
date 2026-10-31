@@ -7,7 +7,24 @@
 // Run (Mac/Linux): PROVIDER=gemini API_KEY=your_key node server.js
 // Run (Win PS):    $env:PROVIDER="gemini"; $env:API_KEY="your_key"; node server.js
 // Offline only:    node server.js   (no key → uses Ollama)
+//
+// EASIEST WAY: create a file named  .env  next to this file with two lines:
+//     PROVIDER=gemini
+//     API_KEY=paste_your_key_here
+// then just run:  node server.js   (or: npm start)
 import express from "express";
+import { readFileSync, existsSync } from "node:fs";
+import dns from "node:dns/promises";
+import net from "node:net";
+import { Readable } from "node:stream";
+
+// Tiny .env reader (no extra package needed). Real environment variables still win.
+if (existsSync(".env")) {
+  for (const line of readFileSync(".env", "utf8").split(/\r?\n/)) {
+    const m = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/.exec(line);
+    if (m && !line.trim().startsWith("#") && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+  }
+}
 
 const ONLINE = {
   gemini:     { url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", model: "gemini-2.5-flash" },
@@ -68,5 +85,99 @@ ${memory.name ? "The user's name is " + memory.name + "." : ""}`;
   }
   res.status(503).json({ text: "error" });
 });
+
+
+// Can this website be shown inside Luna's split screen? (checks X-Frame-Options / CSP frame-ancestors)
+app.get("/api/frameable", async (req, res) => {
+  try {
+    const u = new URL(String(req.query.url || ""));
+    if (!/^https?:$/.test(u.protocol) || /^(localhost$|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|0\.)/.test(u.hostname)) throw new Error("bad url");
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 4000);
+    const r = await fetch(u, { redirect: "follow", signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (Luna)" } });
+    clearTimeout(t);
+    try { await r.body?.cancel(); } catch {}
+    const xfo = (r.headers.get("x-frame-options") || "").toLowerCase();
+    const csp = (r.headers.get("content-security-policy") || "").toLowerCase();
+    const fa = /frame-ancestors([^;]*)/.exec(csp);
+    let ok = true;
+    if (xfo.includes("deny") || xfo.includes("sameorigin")) ok = false;
+    if (fa && !/(^|\s)\*(\s|$)/.test(fa[1])) ok = false;
+    res.json({ ok });
+  } catch { res.json({ ok: null }); }
+});
+
+// ---------- Luna's built-in browser: "compatibility mode" proxy ----------
+// Big sites (Google, YouTube...) forbid being shown inside another page. This route fetches the page on the server,
+// drops the blocking headers and sends it back so it can open inside Luna's browser pane. It only fetches public websites.
+const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
+function privateIP(ip) {
+  if (net.isIPv4(ip)) {
+    const [a, b] = ip.split(".").map(Number);
+    return a === 0 || a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224;
+  }
+  const x = ip.toLowerCase();
+  return x === "::1" || x === "::" || /^f[cd]/.test(x) || x.startsWith("fe80") || /^::ffff:(127|10|0|169\.254|192\.168)\./.test(x);
+}
+async function safeUrl(s) {
+  const u = new URL(s);
+  if (!/^https?:$/.test(u.protocol)) throw new Error("only http and https");
+  const host = u.hostname.replace(/^\[|\]$/g, "");
+  const addrs = net.isIP(host) ? [{ address: host }] : await dns.lookup(host, { all: true });
+  if (!addrs.length || addrs.some((a) => privateIP(a.address))) throw new Error("that address is not allowed");
+  return u;
+}
+// Runs inside the proxied page: clicks and form searches are handed to Luna so they open in the same pane.
+const NAV_SCRIPT = `<script>(function(){
+function abs(u){try{return new URL(u,document.baseURI).href}catch(e){return null}}
+function go(u){parent.postMessage({luna:"nav",url:u},"*")}
+document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(!a)return;
+var h=a.getAttribute("href");if(!h||h.charAt(0)==="#"||/^(javascript|mailto|tel|blob|data):/i.test(h))return;
+var u=abs(h);if(!u)return;e.preventDefault();e.stopPropagation();go(u)},true);
+document.addEventListener("submit",function(e){var f=e.target;if(!f||String(f.method||"get").toLowerCase()!=="get")return;
+var u=abs(f.getAttribute("action")||"");if(!u)return;var q=new URLSearchParams();
+new FormData(f).forEach(function(v,k){if(typeof v==="string")q.append(k,v)});
+var x=new URL(u);x.search=q.toString();e.preventDefault();e.stopPropagation();go(x.href)},true);
+})()</script>`;
+
+app.get("/api/proxy", async (req, res) => {
+  try {
+    let u = await safeUrl(String(req.query.url || ""));
+    let r;
+    for (let i = 0; i < 6; i++) {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), 15000);
+      r = await fetch(u, { redirect: "manual", signal: ctl.signal, headers: { "user-agent": UA, accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "accept-language": "en-IN,en;q=0.9" } });
+      clearTimeout(t);
+      const loc = r.headers.get("location");
+      if (r.status >= 300 && r.status < 400 && loc) {
+        u = await safeUrl(new URL(loc, u).href);
+        try { await r.body?.cancel(); } catch {}
+        continue;
+      }
+      break;
+    }
+    const type = r.headers.get("content-type") || "application/octet-stream";
+    res.status(r.status);
+    res.set("cache-control", "no-store");
+    if (/text\/html|application\/xhtml/i.test(type)) {
+      const buf = Buffer.from(await r.arrayBuffer());
+      const cs = /charset=([\w-]+)/i.exec(type)?.[1] || /<meta[^>]+charset=["']?([\w-]+)/i.exec(buf.subarray(0, 2048).toString("latin1"))?.[1] || "utf-8";
+      let html;
+      try { html = new TextDecoder(cs).decode(buf); } catch { html = buf.toString("utf8"); }
+      html = html.replace(/<meta[^>]+http-equiv=["']?content-security-policy["']?[^>]*>/gi, "");
+      const inject = `<base href="${u.href.replace(/"/g, "&quot;")}">` + NAV_SCRIPT;
+      html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + inject) : inject + html;
+      res.set("content-type", "text/html; charset=utf-8").send(html);
+    } else {
+      res.set("content-type", type);
+      if (r.body) Readable.fromWeb(r.body).pipe(res); else res.end();
+    }
+  } catch (e) {
+    res.status(502).set("content-type", "text/html; charset=utf-8")
+      .send(`<body style="font-family:sans-serif;padding:2em;background:#1a0b2e;color:#fff"><h3>Luna couldn't load this page</h3><p>${String(e.message).replace(/[<>&]/g, "")}</p>`);
+  }
+});
+
 
 app.listen(3000, () => console.log(`Luna running on http://localhost:3000 | brains: ${brains.map((b) => b.name).join(" → ")}`));
